@@ -11,6 +11,7 @@ export default function JobStatusPage() {
     setIsLoading(true)
     const res = await fetch('/api/jobs', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: 'abcd-1234' }),
     })
     const data = await res.json()
@@ -23,7 +24,7 @@ export default function JobStatusPage() {
     if (!jobId) return
 
     const interval = setInterval(async () => {
-      const res = await fetch(`/api/jobs/status/${jobId}`)
+      const res = await fetch(`/api/jobs/status/${jobId}?t=${Date.now()}`, { cache: 'no-store' })
       const data = await res.json()
       setStatus(data)
 
@@ -60,9 +61,9 @@ export default function JobStatusPage() {
                   : status.status}
               </span>
             </p>
-            <div className="w-64 mx-auto rounded-full h-4 overflow-hidden">
+            <div className="w-64 mx-auto rounded-full h-4 overflow-hidden bg-gray-200">
               <div
-                className="h-4 transition-all duration-500"
+                className="h-4 transition-all duration-500 bg-blue-500"
                 style={{ width: `${status.progress || 0}%` }}
               ></div>
             </div>

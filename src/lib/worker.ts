@@ -1,24 +1,19 @@
 import { Worker } from 'bullmq'
-import IORedis from 'ioredis'
 
 import { JobData } from '@/types'
-
-const connection = new IORedis(process.env.REDIS_URL!, { maxRetriesPerRequest: null })
+import { redisClient } from '@/lib/redis'
 
 const worker = new Worker<JobData>(
     'my-queue',
     async (job) => {
-
         const data = job.data
-
         for (let i = 0; i <= 100; i += 10) {
             await new Promise((r) => setTimeout(r, 500))
-            job.updateProgress(i)
+            await job.updateProgress(i)
         }
-
         return { message: 'Done processing', data: job.data }
     },
-    { connection }
+    { connection: redisClient }
 )
 
 worker.on('completed', (job) => {

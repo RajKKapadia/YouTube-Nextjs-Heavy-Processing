@@ -6,7 +6,6 @@ export async function POST(req: NextRequest) {
     const rawBody = await req.text()
     const body = JSON.parse(rawBody)
     const { success, data: parsedBody } = JobSchema.safeParse(body)
-    console.log(success)
     if (!success) {
         return NextResponse.json({ error: "Unsupported body" }, { status: 400 })
     }

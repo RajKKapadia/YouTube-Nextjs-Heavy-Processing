@@ -1,15 +1,12 @@
-import { Queue, QueueEvents } from 'bullmq'
-import IORedis from 'ioredis'
+import { Queue } from 'bullmq'
 
 import { JobData } from '@/types'
+import { redisClient } from '@/lib//redis'
 
-const connection = new IORedis(process.env.REDIS_URL!, { maxRetriesPerRequest: null })
-
-export const myQueue = new Queue<JobData>('my-queue', { connection })
-export const queueEvents = new QueueEvents('my-queue', { connection })
+export const myQueue = new Queue<JobData>('my-queue', { connection: redisClient })
 
 export const addJobToQueue = async ({ data }: { data: JobData }) => {
-    const job = await myQueue.add('heavy-task', data)
+    const job = await myQueue.add('my-queue', data)
     return job
 }
 
